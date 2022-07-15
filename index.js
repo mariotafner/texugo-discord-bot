@@ -14,11 +14,10 @@ function has_url(msg) {
 }
 
 async function process_message(msg) {
-  //console.log(msg)
+  console.log(msg)
   if (msg.content === '!texugobot') {
     msg.reply('oi')
   }
-
 
   let channel = await client.channels.fetch(msg.channelId)
   if (channel.name === '☢react') {
@@ -32,16 +31,12 @@ async function process_message(msg) {
     if (has_url(msg.content)) {
       content += 'Conteúdo: ' + msg.content + '\n'
 
-      //react_approvals.send(content)
       if (msg.embeds.length > 0) {
         embed = msg.embeds[0]
       }
       content_has_url = true
       send = true
     }
-
-    //msg.react('✅')
-
 
     attachments = Array.from(msg.attachments)
     files_list = []
@@ -50,39 +45,6 @@ async function process_message(msg) {
       for (let attachment of attachments) {
         const url = attachment[1].url
         const filename = attachment[1].name
-
-        /*const image = new Attachment(url, filename)
-        message.channel.send(content, image)*/
-
-
-        /*const exampleEmbed = new MessageEmbed()
-          .setColor('#0099ff')
-          .setTitle('Some title')
-          .setURL('https://discord.js.org/')
-          .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
-          .setDescription('Some description here')
-          .setThumbnail('https://i.imgur.com/AfFp7pu.png')
-          .addFields(
-            { name: 'Regular field title', value: 'Some value here' },
-            { name: '\u200B', value: '\u200B' },
-            { name: 'Inline field title', value: 'Some value here', inline: true },
-            { name: 'Inline field title', value: 'Some value here', inline: true },
-          )
-          .addField('Inline field title', 'Some value here', true)
-          .setImage('https://i.imgur.com/AfFp7pu.png')
-          .setTimestamp()
-          .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' })*/
-
-
-        //channel.send({ embeds: [exampleEmbed] })
-
-        // react_approvals.send({
-        //   files: [{
-        //     attachment: url,
-        //     name: filename
-        //   }],
-        //   content: content,
-        // })
 
         files_list.push({
           attachment: url,
@@ -93,7 +55,10 @@ async function process_message(msg) {
 
     const messageEmbed = new MessageEmbed()
       .setColor('#0099ff')
-      .setAuthor({ name: msg.author.username, iconURL: 'https://cdn.discordapp.com/avatars/'+msg.author.id+'/'+msg.author.avatar+'.webp?size=80', url: 'https://discord.js.org' })
+      .setAuthor({ 
+        name: msg.author.username, 
+        iconURL: 'https://cdn.discordapp.com/avatars/'+msg.author.id+'/'+msg.author.avatar+'.webp?size=80', 
+        url: 'https://discord.js.org'})
       .setTimestamp()
 
   
