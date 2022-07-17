@@ -65,13 +65,25 @@ async function process_message(msg) {
     if (content_has_url) {
       console.log(embed)
       try{
-        messageEmbed.setTitle(embed.title)
         messageEmbed.setURL(embed.url)
         messageEmbed.setThumbnail(embed.thumbnail.url)
       }
       catch(e){
-        messageEmbed.setTitle(msg.content)
         messageEmbed.setURL(msg.url)
+        console.log(e)
+      }
+
+      try{
+        messageEmbed.setTitle(embed.title)   
+      }
+      catch(e){
+        try{
+          messageEmbed.setTitle(embed.description)
+        }
+        catch(e){
+          messageEmbed.setTitle(msg.content)
+          console.log(e)
+        }
         console.log(e)
       }
     }
@@ -107,7 +119,9 @@ async function approve_message(channel_id, message_id){
 }
 
 client.on('messageCreate', msg => {
-  process_message(msg)
+  setTimeout(() => {
+    process_message(msg)
+  }, 5000);
 })
 
 client.on('interactionCreate', interaction => {
