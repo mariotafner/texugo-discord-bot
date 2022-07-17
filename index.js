@@ -64,9 +64,16 @@ async function process_message(msg) {
   
     if (content_has_url) {
       console.log(embed)
-      messageEmbed.setTitle(embed.title)
-      messageEmbed.setURL(embed.url)
-      messageEmbed.setThumbnail(embed.thumbnail.url)
+      try{
+        messageEmbed.setTitle(embed.title)
+        messageEmbed.setURL(embed.url)
+        messageEmbed.setThumbnail(embed.thumbnail.url)
+      }
+      catch(e){
+        messageEmbed.setTitle(msg.content)
+        messageEmbed.setURL(msg.url)
+        console.log(e)
+      }
     }
     
     const row = new MessageActionRow()
