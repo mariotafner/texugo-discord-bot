@@ -12,6 +12,9 @@ function kelvinToCelsius(kelvin) {
     return Math.round(kelvin - 273.15);
 }
 
+const capitalize = (str, lower = false) =>
+  (lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
+
 export async function clima(msg){
     const response = await fetch('https://api.openweathermap.org/data/2.5/weather?lat='+process.env.LAT+'&lon='+process.env.LON+'&appid='+process.env.HEATHER_API_KEY+'&lang=pt_br');
     const data = await response.json();
@@ -20,10 +23,10 @@ export async function clima(msg){
 
     const messageEmbed = new MessageEmbed()
         .setColor(0xEC6E4C)
-        .setTitle('Catanduva SP - ' + kelvinToCelsius(data.main.temp) + '°C')
+        .setTitle('Catanduva SP | ' + kelvinToCelsius(data.main.temp) + '°C')
         //.setURL('https://discord.js.org/')
         //.setAuthor({ name: 'Catanduva SP', iconURL: 'https://openweathermap.org/img/wn/'+data.+'@2x.png', url: 'https://discord.js.org' })
-        .setDescription(data.weather[0].description)
+        .setDescription(capitalize(data.weather[0].description))
         .setThumbnail('https://openweathermap.org/img/wn/'+data.weather[0].icon+'@2x.png')
         .addFields(
             { name: 'Temperatura', value: kelvinToCelsius(data.main.temp) + '°C', inline: true  },
