@@ -81,6 +81,7 @@ async function process_message(msg) {
           messageEmbed.setTitle(embed.description)
         }
         catch(e){
+          messageEmbed.setURL(msg.content)
           messageEmbed.setTitle(msg.content)
           console.log(e)
         }
