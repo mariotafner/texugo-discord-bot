@@ -95,12 +95,20 @@ async function process_message(msg) {
     const row = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
-					.setCustomId('aprovar_'+msg.id+'-'+msg.channelId)
+					.setCustomId(JSON.stringify({
+            channel_id: msg.channelId,
+            message_id: msg.id,
+            action: 'approve'
+          }))
 					.setLabel('Aprovar')
 					.setStyle('SUCCESS'),
 			
 				new MessageButton()
-					.setCustomId('reprovar_'+msg.id+'-'+msg.channelId)
+					.setCustomId(JSON.stringify({
+            channel_id: msg.channelId,
+            message_id: msg.id,
+            action: 'delete'
+          }))
 					.setLabel('Reprovar')
 					.setStyle('DANGER'),
 
@@ -137,15 +145,13 @@ client.on('interactionCreate', interaction => {
 	if (!interaction.isButton()) return
 	console.log(interaction)
   delete_message(interaction.message.channelId, interaction.message.id)
-  if (interaction.customId.startsWith('reprovar_')) {
-    let message_id = interaction.customId.split('_')[1].split('-')[0]
-    let channel_id = interaction.customId.split('-')[1]
-    delete_message(channel_id, message_id)
+  console.log(interaction.customId)
+  const data = JSON.parse(interaction.customId)
+  if (data.action === 'approve') {
+    approve_message(data.channel_id, data.message_id)
   }
-  else if (interaction.customId.startsWith('aprovar_')) {
-    let message_id = interaction.customId.split('_')[1].split('-')[0]
-    let channel_id = interaction.customId.split('-')[1]
-    approve_message(channel_id, message_id)
+  else if (data.action === 'delete') {
+    delete_message(data.channel_id, data.message_id)
   }
 })
 
