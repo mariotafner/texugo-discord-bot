@@ -9,6 +9,10 @@ client.on('ready', () => {
 
 const react_approval_id = '996512018184011908'
 
+function randon_color() {
+  return '#' + Math.floor(Math.random() * 16777215).toString(16)
+}
+
 function has_url(msg) {
   return msg.includes('https://')
 }
@@ -54,7 +58,7 @@ async function process_message(msg) {
     }
 
     const messageEmbed = new MessageEmbed()
-      .setColor('#0099ff')
+      .setColor(randon_color())
       .setAuthor({ 
         name: msg.author.username, 
         iconURL: 'https://cdn.discordapp.com/avatars/'+msg.author.id+'/'+msg.author.avatar+'.webp?size=80', 
@@ -94,13 +98,18 @@ async function process_message(msg) {
 					.setCustomId('aprovar_'+msg.id+'-'+msg.channelId)
 					.setLabel('Aprovar')
 					.setStyle('SUCCESS'),
-			)
-      .addComponents(
+			
 				new MessageButton()
 					.setCustomId('reprovar_'+msg.id+'-'+msg.channelId)
 					.setLabel('Reprovar')
 					.setStyle('DANGER'),
-			)
+
+        new MessageButton()
+          .setLabel('Ver Mensagem')
+          .setURL(msg.url)
+          .setStyle('LINK'),
+      );
+
     if (send)
       react_approvals.send({ embeds: [messageEmbed], files: files_list, components: [row] })
   }
