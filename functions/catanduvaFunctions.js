@@ -31,7 +31,7 @@ export async function clima(msg){
             { name: 'Mínima', value: kelvinToCelsius(data.main.temp_min) + '°C', inline: true },
             { name: 'Máxima', value: kelvinToCelsius(data.main.temp_max) + '°C', inline: true },
             { name: 'Humidade', value: data.main.humidity + "%", inline: true },
-            { name: 'Vento', value: (data.wind.speed * 3.6) + 'km/h', inline: true },
+            { name: 'Vento', value: Math.round(data.wind.speed * 3.6) + 'km/h', inline: true },
         )
         
         .setImage('https://images.adsttc.com/media/images/58c7/6057/e58e/ce3e/6900/00ac/medium_jpg/15271-bg-pcasCatanduva-0081-alta.jpg?1489461305')
