@@ -69,7 +69,7 @@ async function process_message(msg) {
         messageEmbed.setThumbnail(embed.thumbnail.url)
       }
       catch(e){
-        messageEmbed.setURL(msg.url)
+        messageEmbed.setURL(msg.content)
         console.log(e)
       }
 
@@ -81,7 +81,6 @@ async function process_message(msg) {
           messageEmbed.setTitle(embed.description)
         }
         catch(e){
-          messageEmbed.setURL(msg.content)
           messageEmbed.setTitle(msg.content)
           console.log(e)
         }
