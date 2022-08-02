@@ -16,41 +16,39 @@ function has_url(msg) {
     return msg.includes('https://')
 }
 
-const react_approval_id = '996512018184011908'
+const react_aprovado_id = '996512018184011908'
+const react_antigo_id = '766474508944670743'
+const react_novo_id = '1003818108793933886'
 
 export async function process_react(client, msg) {
-    let send = false
-    let content = ''
-    let embed = {}
-    let content_has_url = false
-
-    let react_approvals = await client.channels.fetch(react_approval_id)
-
     if (has_url(msg.content)) {
-        content += 'Conteúdo: ' + msg.content + '\n'
-
         if (msg.embeds.length > 0) {
-            embed = msg.embeds[0]
+            resend_react(client, msg, msg.content, msg.embeds[0], null)
         }
-        content_has_url = true
-        send = true
+        else {
+            resend_react(client, msg, msg.content, null, null)
+        }
     }
 
     let attachments = Array.from(msg.attachments)
-    let files_list = []
     if (attachments.length > 0) {
-        send = true
         for (let attachment of attachments) {
             const url = attachment[1].url
             const filename = attachment[1].name
-
-            files_list.push({
+            resend_react(client, msg, null, null, {
                 attachment: url,
                 name: filename
             })
         }
     }
 
+    setTimeout(() => {
+        msg.delete()
+    }, 10);
+}
+
+async function resend_react(client, msg, url, embed, file){
+    let files = []
     const messageEmbed = new MessageEmbed()
         .setColor(randon_color())
         .setAuthor({
@@ -60,28 +58,36 @@ export async function process_react(client, msg) {
         })
         .setTimestamp()
 
-
-    if (content_has_url) {
-        console.log(embed)
-        try {
-            messageEmbed.setURL(embed.url)
-            messageEmbed.setThumbnail(embed.thumbnail.url)
-        } catch (e) {
-            messageEmbed.setURL(msg.content)
-            console.log(e)
-        }
-
-        try {
-            messageEmbed.setTitle(embed.title)
-        } catch (e) {
+    if (url) {
+        if (embed) {
+            console.log(embed)
             try {
-                messageEmbed.setTitle(embed.description)
+                messageEmbed.setURL(embed.url)
+                messageEmbed.setThumbnail(embed.thumbnail.url)
             } catch (e) {
-                messageEmbed.setTitle(msg.content)
+                messageEmbed.setURL(msg.content)
                 console.log(e)
             }
-            console.log(e)
+
+            try {
+                messageEmbed.setTitle(embed.title)
+            } catch (e) {
+                try {
+                    messageEmbed.setTitle(embed.description)
+                } catch (e) {
+                    messageEmbed.setTitle(msg.content)
+                    console.log(e)
+                }
+                console.log(e)
+            }    
         }
+        else {
+            messageEmbed.setURL(msg.content)
+            messageEmbed.setTitle(msg.content)
+        }
+    }
+    else if (file){
+        files = [file]
     }
 
     const row = new MessageActionRow()
@@ -101,21 +107,16 @@ export async function process_react(client, msg) {
                 message_id: msg.id,
                 action: 'delete'
             }))
-            .setLabel('Reprovar')
+            .setLabel('Excluir')
             .setStyle('DANGER'),
-
-            new MessageButton()
-            .setLabel('Ver Mensagem')
-            .setURL(msg.url)
-            .setStyle('LINK'),
         );
 
-    if (send)
-        react_approvals.send({
-            embeds: [messageEmbed],
-            files: files_list,
-            components: [row]
-        })
+    let react_channel = await client.channels.fetch(react_novo_id)
+    react_channel.send({
+        embeds: [messageEmbed],
+        files: files,
+        components: [row]
+    })
 }
 
 async function delete_message(client, channel_id, message_id) {
@@ -126,21 +127,88 @@ async function delete_message(client, channel_id, message_id) {
     console.log(channel_id, message_id)
 }
 
-async function approve_message(client, channel_id, message_id) {
-    const channel = await client.channels.fetch(channel_id)
-    channel.messages.fetch(message_id).then(msg => msg.react('👍')).catch(() => {
-        console.log('message not found')
+async function approve_message(client, msg) {
+    let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
+    
+    let files = []
+    let attachments = Array.from(msg.attachments)
+    if (attachments.length > 0) {
+        for (let attachment of attachments) {
+            const url = attachment[1].url
+            const filename = attachment[1].name
+
+            files.push({
+                attachment: url,
+                name: filename
+            })
+        }
+    }
+
+    let embed = null
+    if (msg.embeds.length > 0){
+        embed = msg.embeds[0]
+    } 
+        
+    const messageEmbed = new MessageEmbed()
+        .setColor(randon_color())
+        .setAuthor({
+            name: embed.author.name,
+            iconURL: embed.author.iconURL,
+            url: 'https://discord.js.org'
+        })
+        .setTimestamp()
+
+    console.log(embed)
+    if (embed.url){
+        messageEmbed.setURL(embed.url)
+        messageEmbed.setThumbnail(embed.thumbnail.url)
+        messageEmbed.setTitle(embed.title)
+    }
+
+    const row = new MessageActionRow()
+    .addComponents(
+        new MessageButton()
+        .setCustomId(JSON.stringify({
+            action: 'delete'
+        }))
+        .setLabel('Concluído')
+        .setStyle('PRIMARY'),
+    );
+
+
+    react_aprovado_channel.send({
+        embeds: [messageEmbed],
+        files: files,
+        components: [row]
     })
-    console.log(channel_id, message_id)
 }
 
-export function process_react_interaction(client, interaction){
+async function is_mod(client, interaction){
+    console.log(interaction)
+    //let user = await client.users.fetch(interaction.user_id)
+    //console.log(user)
+    return interaction.member.roles.cache.some(role => role.name === 'SUB-DONO') || interaction.member.roles.cache.some(role => role.name === 'MOD') || interaction.member.id === '553399153930272780'
+}
+
+function is_owner(interaction){
+    let embed = null
+    if (interaction.message.embeds.length > 0){
+        embed = interaction.message.embeds[0]
+    } 
+    console.log(interaction.user.username, embed.author.name)
+    return interaction.user.username === embed.author.name
+}
+
+export async function process_react_interaction(client, interaction){
     const data = JSON.parse(interaction.customId)
     if (data.action === 'approve') {
-        approve_message(client, data.channel_id, data.message_id)
-        delete_message(client, interaction.message.channelId, interaction.message.id)
+        if (await is_mod(client, interaction)) {
+            approve_message(client, interaction.message)
+            delete_message(client, interaction.message.channelId, interaction.message.id)
+        }
     } else if (data.action === 'delete') {
-        delete_message(client, data.channel_id, data.message_id)
-        delete_message(client, interaction.message.channelId, interaction.message.id)
+        if (await is_mod(client, interaction) || is_owner(interaction)) {
+            delete_message(client, interaction.message.channelId, interaction.message.id)
+        }
     }
 }
