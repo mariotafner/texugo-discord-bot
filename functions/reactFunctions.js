@@ -159,8 +159,13 @@ async function approved_message(client, msg, action) {
     console.log(embed)
     if (embed.url){
         messageEmbed.setURL(embed.url)
-        messageEmbed.setThumbnail(embed.thumbnail.url)
         messageEmbed.setTitle(embed.title)
+        try{
+            messageEmbed.setThumbnail(embed.thumbnail.url)
+        }
+        catch(e){
+            console.log(e)
+        }
     }
 
     
@@ -219,7 +224,7 @@ export async function process_react_interaction(client, interaction){
         }
     } 
     else if (data.action === 'delete') {
-        if (await is_mod(interaction.member) || is_owner(interaction) || is_speedyy(interaction.member)) {
+        if (await is_mod(interaction.member) || is_owner(interaction)) {
             delete_message(client, interaction.message.channelId, interaction.message.id)
         }
     }
