@@ -40,9 +40,6 @@ async function process_message(msg) {
         clima(msg)
     }
     
-
-    let channel = await client.channels.fetch(msg.channelId)
-    //if (channel.name === '☢react') {
     if (msg.channelId === react_novo_id) {
         if (msg.author.username != 'texugobot') {
             setTimeout(() => {
@@ -66,9 +63,6 @@ client.on('interactionCreate', interaction => {
 client.on('MessageReactionAdd', (action, user) => {
     console.log(action)
 });
-
-
-
 
 //make sure this line is the last line
 client.login(process.env.CLIENT_TOKEN) //login bot using token

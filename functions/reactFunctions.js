@@ -127,9 +127,7 @@ async function delete_message(client, channel_id, message_id) {
     console.log(channel_id, message_id)
 }
 
-async function approve_message(client, msg) {
-    let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
-    
+async function approved_message(client, msg, action) {
     let files = []
     let attachments = Array.from(msg.attachments)
     if (attachments.length > 0) {
@@ -165,29 +163,38 @@ async function approve_message(client, msg) {
         messageEmbed.setTitle(embed.title)
     }
 
+    
     const row = new MessageActionRow()
     .addComponents(
         new MessageButton()
         .setCustomId(JSON.stringify({
-            action: 'delete'
+            action: 'complete'
         }))
         .setLabel('Concluído')
         .setStyle('PRIMARY'),
     );
 
-
-    react_aprovado_channel.send({
-        embeds: [messageEmbed],
-        files: files,
-        components: [row]
-    })
+    if (action === 'approve') {
+        let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
+        react_aprovado_channel.send({
+            embeds: [messageEmbed],
+            files: files,
+            components: [row]
+        })
+    }
+    else if (action === 'complete') {
+        let react_antigo_channel = await client.channels.fetch(react_antigo_id)
+        react_antigo_channel.send({
+            embeds: [messageEmbed],
+            files: files,
+            components: []
+        })
+    }
 }
 
-async function is_mod(client, interaction){
-    console.log(interaction)
-    //let user = await client.users.fetch(interaction.user_id)
-    //console.log(user)
-    return interaction.member.roles.cache.some(role => role.name === 'SUB-DONO') || interaction.member.roles.cache.some(role => role.name === 'MOD') || interaction.member.id === '553399153930272780'
+async function is_mod(member){
+    console.log(member)
+    return member.roles.cache.some(role => role.name === 'SUB-DONO') || interaction.member.roles.cache.some(role => role.name === 'MOD') || is_speedyy(interaction.member)
 }
 
 function is_owner(interaction){
@@ -199,15 +206,26 @@ function is_owner(interaction){
     return interaction.user.username === embed.author.name
 }
 
+function is_speedyy(member){
+    return member.id === '553399153930272780'
+}
+
 export async function process_react_interaction(client, interaction){
     const data = JSON.parse(interaction.customId)
     if (data.action === 'approve') {
-        if (await is_mod(client, interaction)) {
-            approve_message(client, interaction.message)
+        if (await is_mod(interaction.member)) {
+            await approved_message(client, interaction.message, 'approve')
             delete_message(client, interaction.message.channelId, interaction.message.id)
         }
-    } else if (data.action === 'delete') {
-        if (await is_mod(client, interaction) || is_owner(interaction)) {
+    } 
+    else if (data.action === 'delete') {
+        if (await is_mod(interaction.member) || is_owner(interaction) || is_speedyy(interaction.member)) {
+            delete_message(client, interaction.message.channelId, interaction.message.id)
+        }
+    }
+    else if (data.action === 'complete') {
+        if (is_speedyy(interaction.member)) {
+            await approved_message(client, interaction.message, 'complete')
             delete_message(client, interaction.message.channelId, interaction.message.id)
         }
     }
