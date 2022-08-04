@@ -30,9 +30,9 @@ export async function clima(msg){
         .setThumbnail('https://openweathermap.org/img/wn/'+data.weather[0].icon+'@2x.png')
         .addFields(
             { name: 'Temperatura', value: kelvinToCelsius(data.main.temp) + '°C', inline: true  },
-            { name: 'Sensação Térmica', value: kelvinToCelsius(data.main.feels_like) + '°C', inline: true  },
-            { name: 'Mínima', value: kelvinToCelsius(data.main.temp_min) + '°C', inline: true },
-            { name: 'Máxima', value: kelvinToCelsius(data.main.temp_max) + '°C', inline: true },
+            //{ name: 'Sensação Térmica', value: kelvinToCelsius(data.main.feels_like) + '°C', inline: true  },
+            //{ name: 'Mínima', value: kelvinToCelsius(data.main.temp_min) + '°C', inline: true },
+            //{ name: 'Máxima', value: kelvinToCelsius(data.main.temp_max) + '°C', inline: true },
             { name: 'Umidade', value: data.main.humidity + "%", inline: true },
             { name: 'Vento', value: Math.round(data.wind.speed * 3.6) + ' km/h', inline: true },
         )
