@@ -16,7 +16,7 @@ const capitalize = (str, lower = false) =>
   (lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
 
 export async function clima(msg){
-    const response = await fetch('https://api.openweathermap.org/data/2.5/weather?lat='+process.env.LAT+'&lon='+process.env.LON+'&appid='+process.env.HEATHER_API_KEY+'&lang=pt_br');
+    const response = await fetch('https://api.openweathermap.org/data/2.5/weather?lat='+process.env.LAT+'&lon='+process.env.LON+'&appid='+process.env.WEATHER_API_KEY+'&lang=pt_br');
     const data = await response.json();
 
     const { EmbedBuilder } = require('discord.js');
@@ -33,7 +33,7 @@ export async function clima(msg){
             { name: 'Sensação Térmica', value: kelvinToCelsius(data.main.feels_like) + '°C', inline: true  },
             { name: 'Mínima', value: kelvinToCelsius(data.main.temp_min) + '°C', inline: true },
             { name: 'Máxima', value: kelvinToCelsius(data.main.temp_max) + '°C', inline: true },
-            { name: 'Humidade', value: data.main.humidity + "%", inline: true },
+            { name: 'Umidade', value: data.main.humidity + "%", inline: true },
             { name: 'Vento', value: Math.round(data.wind.speed * 3.6) + ' km/h', inline: true },
         )
         
