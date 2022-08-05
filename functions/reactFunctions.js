@@ -215,6 +215,10 @@ function is_speedyy(member){
     return member.id === '553399153930272780'
 }
 
+function is_mario(member){
+    return member.id === '287055431606599680'
+}
+
 export async function process_react_interaction(client, interaction){
     const data = JSON.parse(interaction.customId)
     if (data.action === 'approve') {
@@ -229,7 +233,7 @@ export async function process_react_interaction(client, interaction){
         }
     }
     else if (data.action === 'complete') {
-        if (is_speedyy(interaction.member)) {
+        if (is_speedyy(interaction.member) || is_mario(interaction.member)) {
             await approved_message(client, interaction.message, 'complete')
             delete_message(client, interaction.message.channelId, interaction.message.id)
         }
