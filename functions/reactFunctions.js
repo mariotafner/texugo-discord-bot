@@ -199,7 +199,7 @@ async function approved_message(client, msg, action) {
 
 async function is_mod(member){
     console.log(member)
-    return member.roles.cache.some(role => role.name === 'SUB-DONO') || interaction.member.roles.cache.some(role => role.name === 'MOD') || is_speedyy(interaction.member)
+    return member.roles.cache.some(role => role.name === 'SUB-DONO') || member.roles.cache.some(role => role.name === 'MOD') || is_speedyy(member)
 }
 
 function is_owner(interaction){
