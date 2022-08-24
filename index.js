@@ -17,8 +17,6 @@ const {
     GatewayIntentBits, Partials 
 } = require('discord.js') //import discord.js
 
-
-
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.DirectMessages,
         GatewayIntentBits.GuildBans,
@@ -42,8 +40,6 @@ async function process_message(msg) {
             }, 1000);
         }
     }
-
-
 }
 
 client.on('messageCreate', msg => {
@@ -62,7 +58,7 @@ client.on('interactionCreate', async interaction => {
             // Create the modal
             const modal = new ModalBuilder()
                 .setCustomId('myModal')
-                .setTitle('My Modal');
+                .setTitle('Mensagem');
 
             // Add components to modal
 
