@@ -2,10 +2,11 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 const {
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
-    Attachment
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    Attachment,
+    ButtonStyle 
 } = require('discord.js') //import discord.js
 
 function randon_color() {
@@ -49,7 +50,7 @@ export async function process_react(client, msg) {
 
 async function resend_react(client, msg, url, embed, file){
     let files = []
-    const messageEmbed = new MessageEmbed()
+    const messageEmbed = new EmbedBuilder()
         .setColor(randon_color())
         .setAuthor({
             name: msg.author.username,
@@ -90,25 +91,25 @@ async function resend_react(client, msg, url, embed, file){
         files = [file]
     }
 
-    const row = new MessageActionRow()
+    const row = new ActionRowBuilder()
         .addComponents(
-            new MessageButton()
+            new ButtonBuilder()
             .setCustomId(JSON.stringify({
                 channel_id: msg.channelId,
                 message_id: msg.id,
                 action: 'approve'
             }))
             .setLabel('Aprovar')
-            .setStyle('SUCCESS'),
+            .setStyle(ButtonStyle.Success),
 
-            new MessageButton()
+            new ButtonBuilder()
             .setCustomId(JSON.stringify({
                 channel_id: msg.channelId,
                 message_id: msg.id,
                 action: 'delete'
             }))
             .setLabel('Excluir')
-            .setStyle('DANGER'),
+            .setStyle(ButtonStyle.Danger),
         );
 
     let react_channel = await client.channels.fetch(react_novo_id)
@@ -147,7 +148,7 @@ async function approved_message(client, msg, action) {
         embed = msg.embeds[0]
     } 
         
-    const messageEmbed = new MessageEmbed()
+    const messageEmbed = new EmbedBuilder()
         .setColor(randon_color())
         .setAuthor({
             name: embed.author.name,
@@ -169,14 +170,14 @@ async function approved_message(client, msg, action) {
     }
 
     
-    const row = new MessageActionRow()
+    const row = new ActionRowBuilder()
     .addComponents(
-        new MessageButton()
+        new ButtonBuilder()
         .setCustomId(JSON.stringify({
             action: 'complete'
         }))
         .setLabel('Concluído')
-        .setStyle('PRIMARY'),
+        .setStyle(ButtonStyle.Primary),
     );
 
     if (action === 'approve') {

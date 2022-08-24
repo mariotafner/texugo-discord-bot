@@ -11,17 +11,19 @@ import { clima } from './functions/catanduvaFunctions.js'
 
 const {
     Client,
-    MessageActionRow,
     Intents,
-    MessageButton
+    ButtonBuilder,
+    ActionRowBuilder, ModalBuilder, Modal, TextInputBuilder, TextInputStyle, TextInputComponent, InteractionType,
+    GatewayIntentBits, Partials 
 } = require('discord.js') //import discord.js
 
-const intents = new Intents(Intents.ALL);
+
 
 const client = new Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
-    partials: ['CHANNEL', 'GUILD_MEMBER', 'GUILD_SCHEDULED_EVENT', 'MESSAGE', 'REACTION', 'USER'],
-    ws: { intents }
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.MessageContent,],
+    partials: [Partials.Channel, Partials.GuildMember, Partials.GuildScheduledEvent, Partials.Message, Partials.Reaction, Partials.User]
 }) //create new client
 
 client.on('ready', () => {
@@ -30,34 +32,71 @@ client.on('ready', () => {
 
 async function process_message(msg) {
     console.log(msg)
-    if (msg.content === '!texugobot') {
-        msg.reply('oi')
-    }
-    else if (msg.content === '!texugobot help') {
-        msg.reply('Em breve!')
-    }
-    else if (msg.content === '!catanduva') {
-        clima(msg)
-    }
-    
-    if (msg.channelId === react_novo_id) {
-        if (msg.author.username != 'texugobot') {
+    if (msg.author.username != 'texugobot'){
+        if (msg.content.includes('!catanduva')) {
+            msg.reply('O comando !catanduva foi descontinuado, utilize /catanduva')
+        }
+        if (msg.channelId === react_novo_id) {
             setTimeout(() => {
                 process_react(client, msg)
             }, 1000);
         }
     }
+
+
 }
 
 client.on('messageCreate', msg => {
     process_message(msg)
 })
 
-client.on('interactionCreate', interaction => {
+client.on('interactionCreate', async interaction => {
     console.log(interaction)
     if (interaction.isButton()) {
         process_react_interaction(client, interaction)
     }
+
+    if (interaction.isCommand()){
+        const { commandName } = interaction;
+        if (commandName === 'texugosay') {
+            // Create the modal
+            const modal = new ModalBuilder()
+                .setCustomId('myModal')
+                .setTitle('My Modal');
+
+            // Add components to modal
+
+            // Create the text input components
+            const messageInput = new TextInputBuilder()
+                .setCustomId('message')
+                .setLabel("Mensagem")
+                // Paragraph means multiple lines of text.
+                .setStyle(TextInputStyle.Paragraph);
+
+            // An action row only holds one text input,
+            // so you need one action row per text input.
+            const firstActionRow = new ActionRowBuilder().addComponents(messageInput);
+
+            // Add inputs to the modal
+            modal.addComponents(firstActionRow);
+
+            // Show the modal to the user
+            await interaction.showModal(modal);
+        }
+        if (commandName === 'catanduva') {
+            clima(interaction)
+        }
+    }
+
+    if (interaction.type === InteractionType.ModalSubmit){
+        // Get the data entered by the user
+	    const message = interaction.fields.getTextInputValue('message');
+        interaction.deferUpdate()
+        let channel = await client.channels.fetch(interaction.channelId)
+        channel.send(message)
+    }
+
+	
 })
 
 client.on('MessageReactionAdd', (action, user) => {

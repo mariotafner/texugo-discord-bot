@@ -2,7 +2,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 const {
-    MessageEmbed,
+    EmbedBuilder,
 } = require('discord.js') //import discord.js
 
 require('dotenv').config() //initialize dotenv
@@ -21,7 +21,7 @@ export async function clima(msg){
 
     const { EmbedBuilder } = require('discord.js');
 
-    const messageEmbed = new MessageEmbed()
+    const messageEmbed = new EmbedBuilder()
         .setColor(0xEC6E4C)
         .setTitle('Catanduva SP | ' + kelvinToCelsius(data.main.temp) + '°C')
         //.setURL('https://discord.js.org/')
@@ -41,5 +41,6 @@ export async function clima(msg){
         .setTimestamp()
         .setFooter({ text: 'Desenvolvido com ♥ por mariofabre', iconURL: 'https://static-cdn.jtvnw.net/jtv_user_pictures/6cc4fbc4-5da2-4321-8876-5ac0d106d777-profile_image-70x70.png' });
 
-    msg.channel.send({ embeds: [messageEmbed] });
+    //msg.channel.send({ embeds: [messageEmbed] });
+    msg.reply({ embeds: [messageEmbed] });
 }
