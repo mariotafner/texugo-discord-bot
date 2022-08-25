@@ -5,6 +5,8 @@ const react_approval_id = '996512018184011908'
 const react_antigo_id = '766474508944670743'
 const react_novo_id = '1003818108793933886'
 
+const wait = require('node:timers/promises').setTimeout;
+
 require('dotenv').config() //initialize dotenv
 import { process_react, process_react_interaction } from './functions/reactFunctions.js'
 import { clima } from './functions/catanduvaFunctions.js'
@@ -14,13 +16,12 @@ const {
     Intents,
     ButtonBuilder,
     ActionRowBuilder, ModalBuilder, Modal, TextInputBuilder, TextInputStyle, TextInputComponent, InteractionType,
-    GatewayIntentBits, Partials 
+    GatewayIntentBits, Partials, EmbedBuilder, Emoji
 } = require('discord.js') //import discord.js
 
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.DirectMessages,
-        GatewayIntentBits.GuildBans,
-        GatewayIntentBits.MessageContent,],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildBans, GatewayIntentBits.MessageContent],
+    //intents: 32767,
     partials: [Partials.Channel, Partials.GuildMember, Partials.GuildScheduledEvent, Partials.Message, Partials.Reaction, Partials.User]
 }) //create new client
 
@@ -54,33 +55,49 @@ client.on('interactionCreate', async interaction => {
 
     if (interaction.isCommand()){
         const { commandName } = interaction;
-        if (commandName === 'texugosay') {
+        if (commandName === 'texugosaytext') {
             // Create the modal
             const modal = new ModalBuilder()
                 .setCustomId('myModal')
                 .setTitle('Mensagem');
 
-            // Add components to modal
-
-            // Create the text input components
             const messageInput = new TextInputBuilder()
                 .setCustomId('message')
                 .setLabel("Mensagem")
-                // Paragraph means multiple lines of text.
                 .setStyle(TextInputStyle.Paragraph);
 
-            // An action row only holds one text input,
-            // so you need one action row per text input.
             const firstActionRow = new ActionRowBuilder().addComponents(messageInput);
 
-            // Add inputs to the modal
             modal.addComponents(firstActionRow);
 
-            // Show the modal to the user
             await interaction.showModal(modal);
         }
-        if (commandName === 'catanduva') {
+        else if (commandName === 'texugosay') {
+            const message = interaction.options.getString('input');
+            
+            interaction.channel.send(message)
+            interaction.reply({
+                content: 'Mensagem enviada!',                
+                ephemeral: true,
+            })
+        }
+        else if (commandName === 'catanduva') {
             clima(interaction)
+        }
+        else if (commandName === 'contator') {
+            const messageEmbed = new EmbedBuilder()
+                .setColor("#fff")
+                .setTitle("Contador 0")
+            //let message = await interaction.reply({ embeds: [messageEmbed] })
+            let message = await interaction.channel.send({ embeds: [messageEmbed] })
+            console.log(message)
+
+            message.react('🔽').then(() => message.react('🔼'))
+
+            interaction.reply({
+                content: 'Contador criado!',                
+                ephemeral: true,
+            })
         }
     }
 
@@ -95,8 +112,27 @@ client.on('interactionCreate', async interaction => {
 	
 })
 
-client.on('MessageReactionAdd', (action, user) => {
-    console.log(action)
+client.on('messageReactionAdd', async (action, user) => {
+    if (user === client.user) return;
+    console.log(action.emoji.name)
+    action.users.remove(user.id);
+    let message = await action.message.channel.messages.fetch(action.message.id)
+    let numero = message.embeds[0].title.split(' ')[1]
+    console.log(numero)
+    if (action.emoji.name === '🔽') {
+        numero = parseInt(numero) - 1
+        const messageEmbed = new EmbedBuilder()
+            .setColor("#fff")
+            .setTitle("Contador " + numero)
+        message.edit({ embeds: [messageEmbed] })
+    }
+    else if (action.emoji.name === '🔼') {
+        numero = parseInt(numero) + 1
+        const messageEmbed = new EmbedBuilder()
+            .setColor("#fff")
+            .setTitle("Contador " + numero)
+        message.edit({ embeds: [messageEmbed] })
+    }
 });
 
 //make sure this line is the last line

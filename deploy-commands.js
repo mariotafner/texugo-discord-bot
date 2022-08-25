@@ -10,7 +10,9 @@ require('dotenv').config() //initialize dotenv
 
 const commands = [
 	new SlashCommandBuilder().setName('catanduva').setDescription('CLima de catanduva'),
-	new SlashCommandBuilder().setName('texugosay').setDescription('Texugo irá dizer algo'),
+	new SlashCommandBuilder().setName('texugosay').setDescription('Texugo irá dizer algo').addStringOption(option => option.setName('input').setDescription('Texto para o bot dizer').setRequired(true)),
+	new SlashCommandBuilder().setName('texugosaytext').setDescription('Texugo irá dizer algo'),
+	new SlashCommandBuilder().setName('contator').setDescription('Texugo sabe contar'),
 ]
 	.map(command => command.toJSON());
 
