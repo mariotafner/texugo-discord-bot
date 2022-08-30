@@ -115,12 +115,13 @@ client.on('interactionCreate', async interaction => {
 client.on('messageReactionAdd', async (action, user) => {
     if (user === client.user) return;
     console.log(action.emoji.name)
-    action.users.remove(user.id);
+    
     let message = await action.message.channel.messages.fetch(action.message.id)
     if (message.embeds.length){
         let numero = message.embeds[0].title.split(' ')[1]
         console.log(numero)
         if (action.emoji.name === '🔽') {
+            action.users.remove(user.id);
             numero = parseInt(numero) - 1
             const messageEmbed = new EmbedBuilder()
                 .setColor("#fff")
@@ -128,6 +129,7 @@ client.on('messageReactionAdd', async (action, user) => {
             message.edit({ embeds: [messageEmbed] })
         }
         else if (action.emoji.name === '🔼') {
+            action.users.remove(user.id);
             numero = parseInt(numero) + 1
             const messageEmbed = new EmbedBuilder()
                 .setColor("#fff")
