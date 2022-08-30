@@ -158,16 +158,17 @@ async function approved_message(client, msg, action) {
         .setTimestamp()
 
     console.log(embed)
-    if (embed.url){
-        messageEmbed.setURL(embed.url)
-        messageEmbed.setTitle(embed.title)
-        try{
-            messageEmbed.setThumbnail(embed.thumbnail.url)
+    if (embed)
+        if (embed.url){
+            messageEmbed.setURL(embed.url)
+            messageEmbed.setTitle(embed.title)
+            try{
+                messageEmbed.setThumbnail(embed.thumbnail.url)
+            }
+            catch(e){
+                console.log(e)
+            }
         }
-        catch(e){
-            console.log(e)
-        }
-    }
 
     
     const row = new ActionRowBuilder()

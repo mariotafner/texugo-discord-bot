@@ -117,21 +117,23 @@ client.on('messageReactionAdd', async (action, user) => {
     console.log(action.emoji.name)
     action.users.remove(user.id);
     let message = await action.message.channel.messages.fetch(action.message.id)
-    let numero = message.embeds[0].title.split(' ')[1]
-    console.log(numero)
-    if (action.emoji.name === '🔽') {
-        numero = parseInt(numero) - 1
-        const messageEmbed = new EmbedBuilder()
-            .setColor("#fff")
-            .setTitle("Contador " + numero)
-        message.edit({ embeds: [messageEmbed] })
-    }
-    else if (action.emoji.name === '🔼') {
-        numero = parseInt(numero) + 1
-        const messageEmbed = new EmbedBuilder()
-            .setColor("#fff")
-            .setTitle("Contador " + numero)
-        message.edit({ embeds: [messageEmbed] })
+    if (message.embeds){
+        let numero = message.embeds[0].title.split(' ')[1]
+        console.log(numero)
+        if (action.emoji.name === '🔽') {
+            numero = parseInt(numero) - 1
+            const messageEmbed = new EmbedBuilder()
+                .setColor("#fff")
+                .setTitle("Contador " + numero)
+            message.edit({ embeds: [messageEmbed] })
+        }
+        else if (action.emoji.name === '🔼') {
+            numero = parseInt(numero) + 1
+            const messageEmbed = new EmbedBuilder()
+                .setColor("#fff")
+                .setTitle("Contador " + numero)
+            message.edit({ embeds: [messageEmbed] })
+        }
     }
 });
 
