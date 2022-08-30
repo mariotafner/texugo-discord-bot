@@ -117,7 +117,7 @@ client.on('messageReactionAdd', async (action, user) => {
     console.log(action.emoji.name)
     action.users.remove(user.id);
     let message = await action.message.channel.messages.fetch(action.message.id)
-    if (message.embeds){
+    if (message.embeds.length){
         let numero = message.embeds[0].title.split(' ')[1]
         console.log(numero)
         if (action.emoji.name === '🔽') {
