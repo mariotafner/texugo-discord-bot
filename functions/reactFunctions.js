@@ -228,16 +228,34 @@ export async function process_react_interaction(client, interaction){
             await approved_message(client, interaction.message, 'approve')
             delete_message(client, interaction.message.channelId, interaction.message.id)
         }
+        else{
+            interaction.reply({
+                content: 'Você não tem permissão para aprovar reacts.',                
+                ephemeral: true,
+            })
+        }
     } 
     else if (data.action === 'delete') {
         if (await is_mod(interaction.member) || is_owner(interaction)) {
             delete_message(client, interaction.message.channelId, interaction.message.id)
+        }
+        else{
+            interaction.reply({
+                content: 'Você não tem permissão para excluir o react do amiguinho.',                
+                ephemeral: true,
+            })
         }
     }
     else if (data.action === 'complete') {
         if (is_speedyy(interaction.member) || is_mario(interaction.member)) {
             await approved_message(client, interaction.message, 'complete')
             delete_message(client, interaction.message.channelId, interaction.message.id)
+        }
+        else{
+            interaction.reply({
+                content: 'Você não tem permissão para realizar essa ação.',                
+                ephemeral: true,
+            })
         }
     }
 }
