@@ -40,6 +40,23 @@ async function process_message(msg) {
                 process_react(client, msg)
             }, 1000);
         }
+        if (msg.content.startsWith('!texugoimg')) {
+            let attachments = Array.from(msg.attachments)
+            if (attachments.length > 0) {
+                for (let attachment of attachments) {
+                    const url = attachment[1].url
+                    const filename = attachment[1].name
+                    
+                    msg.channel.send({
+                        files: [{
+                            attachment: url,
+                            name: filename
+                        }]
+                    })
+                }
+            }
+            msg.delete()
+        }
     }
 }
 
