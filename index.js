@@ -36,7 +36,7 @@ async function process_message(msg) {
             msg.reply('O comando !catanduva foi descontinuado, utilize /catanduva')
         }
         if (msg.channelId === react_novo_id) {
-            if (msg.author.id != '996512018184011908') { //Jorgevictor4675
+            if (msg.author.id != '666840254199889930') { //Jorgevictor4675
                 setTimeout(() => {
                     process_react(client, msg)
                 }, 1000);
