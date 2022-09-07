@@ -36,9 +36,15 @@ async function process_message(msg) {
             msg.reply('O comando !catanduva foi descontinuado, utilize /catanduva')
         }
         if (msg.channelId === react_novo_id) {
-            setTimeout(() => {
-                process_react(client, msg)
-            }, 1000);
+            if (msg.author.id != '996512018184011908') { //Jorgevictor4675
+                setTimeout(() => {
+                    process_react(client, msg)
+                }, 1000);
+            }
+            else
+            {
+                msg.delete()
+            }
         }
         if (msg.content.startsWith('!texugoimg')) {
             let attachments = Array.from(msg.attachments)
