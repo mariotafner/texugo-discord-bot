@@ -36,15 +36,18 @@ async function process_message(msg) {
             msg.reply('O comando !catanduva foi descontinuado, utilize /catanduva')
         }
         if (msg.channelId === react_novo_id) {
-            if (msg.author.id != '666840254199889930') { //Jorgevictor4675
-                setTimeout(() => {
-                    process_react(client, msg)
-                }, 1000);
-            }
-            else
-            {
-                msg.delete()
-            }
+            // if (msg.author.id != '666840254199889930') { //Jorgevictor4675
+            //     setTimeout(() => {
+            //         process_react(client, msg)
+            //     }, 1000);
+            // }
+            // else
+            // {
+            //     msg.delete()
+            // }
+            setTimeout(() => {
+                process_react(client, msg)
+            }, 1000);
         }
         if (msg.content.startsWith('!texugoimg')) {
             let attachments = Array.from(msg.attachments)
