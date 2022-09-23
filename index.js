@@ -75,7 +75,7 @@ client.on('messageCreate', msg => {
 })
 
 client.on('interactionCreate', async interaction => {
-    //console.log(interaction)
+    console.log(interaction)
     if (interaction.isButton()) {
         process_react_interaction(client, interaction)
     }
