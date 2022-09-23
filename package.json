@@ -19,6 +19,7 @@
   "dependencies": {
     "@discordjs/rest": "^1.1.0",
     "axios": "^0.27.2",
+    "chromium": "^3.0.3",
     "create-require": "^1.1.1",
     "discord.js": "^14.3.0",
     "dotenv": "^16.0.1",
