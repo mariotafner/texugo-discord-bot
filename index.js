@@ -10,6 +10,7 @@ const wait = require('node:timers/promises').setTimeout;
 require('dotenv').config() //initialize dotenv
 import { process_react, process_react_interaction } from './functions/reactFunctions.js'
 import { clima } from './functions/catanduvaFunctions.js'
+import { image_text } from './functions/sendImage.js'
 
 const {
     Client,
@@ -30,7 +31,7 @@ client.on('ready', () => {
 })
 
 async function process_message(msg) {
-    console.log(msg)
+    //console.log(msg)
     if (msg.author.username != 'texugobot'){
         if (msg.content.includes('!catanduva')) {
             msg.reply('O comando !catanduva foi descontinuado, utilize /catanduva')
@@ -74,7 +75,7 @@ client.on('messageCreate', msg => {
 })
 
 client.on('interactionCreate', async interaction => {
-    console.log(interaction)
+    //console.log(interaction)
     if (interaction.isButton()) {
         process_react_interaction(client, interaction)
     }
@@ -125,6 +126,11 @@ client.on('interactionCreate', async interaction => {
                 ephemeral: true,
             })
         }
+        else if (commandName === 'texugofrase'){
+            const message = interaction.options.getString('input');
+            await interaction.reply('Carregando...')
+            interaction.editReply({ content: '', files: [await image_text(message)] })
+        }
     }
 
     if (interaction.type === InteractionType.ModalSubmit){
@@ -134,8 +140,6 @@ client.on('interactionCreate', async interaction => {
         let channel = await client.channels.fetch(interaction.channelId)
         channel.send(message)
     }
-
-	
 })
 
 client.on('messageReactionAdd', async (action, user) => {

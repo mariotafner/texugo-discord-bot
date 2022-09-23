@@ -13,6 +13,7 @@ const commands = [
 	new SlashCommandBuilder().setName('texugosay').setDescription('Texugo irá dizer algo').addStringOption(option => option.setName('input').setDescription('Texto para o bot dizer').setRequired(true)),
 	new SlashCommandBuilder().setName('texugosaytext').setDescription('Texugo irá dizer algo'),
 	new SlashCommandBuilder().setName('contator').setDescription('Texugo sabe contar'),
+	new SlashCommandBuilder().setName('texugofrase').setDescription('Texugo irá dizer algo de maneira estilosa').addStringOption(option => option.setName('input').setDescription('Texto para o bot dizer').setRequired(true)),
 ]
 	.map(command => command.toJSON());
 
@@ -24,6 +25,6 @@ rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands })
 	.then(() => console.log('Successfully registered application commands.'))
 	.catch(console.error);
 
-rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, '687250296623202316'), { body: commands })
-    .then(() => console.log('Successfully registered guild commands.'))
-    .catch(console.error);
+// rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, '687250296623202316'), { body: commands })
+//     .then(() => console.log('Successfully registered guild commands.'))
+//     .catch(console.error);
