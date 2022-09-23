@@ -29,6 +29,10 @@ export async function image_text(text) {
 
         let buffer = await nodeHtmlToImage({
             //output: './image.png',
+            puppeteerArgs: {
+                //args: ['--no-sandbox', '--disable-setuid-sandbox']
+                args: ['--no-sandbox']
+            },
             html: `<html> 
                     <head>
                         <style>
