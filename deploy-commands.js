@@ -14,6 +14,7 @@ const commands = [
 	new SlashCommandBuilder().setName('texugosaytext').setDescription('Texugo irá dizer algo'),
 	new SlashCommandBuilder().setName('contator').setDescription('Texugo sabe contar'),
 	new SlashCommandBuilder().setName('texugofrase').setDescription('Texugo irá dizer algo de maneira estilosa').addStringOption(option => option.setName('input').setDescription('Texto para o bot dizer').setRequired(true)),
+	new SlashCommandBuilder().setName('texugoimagine').setDescription('Texugo irá imaginar a sua frase').addStringOption(option => option.setName('input').setDescription('Texto (em inglês) para o bot desenhar').setRequired(true)),
 ]
 	.map(command => command.toJSON());
 

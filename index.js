@@ -11,6 +11,8 @@ require('dotenv').config() //initialize dotenv
 import { process_react, process_react_interaction } from './functions/reactFunctions.js'
 import { clima } from './functions/catanduvaFunctions.js'
 import { image_text } from './functions/sendImage.js'
+import { startLoadingMessage } from './functions/loadingMessage.js'
+import { imagine } from './functions/imagine.js'
 
 const {
     Client,
@@ -67,6 +69,9 @@ async function process_message(msg) {
             }
             msg.delete()
         }
+    }
+    else{
+        //startLoadingMessage(msg)
     }
 }
 
@@ -129,7 +134,18 @@ client.on('interactionCreate', async interaction => {
         else if (commandName === 'texugofrase'){
             const message = interaction.options.getString('input');
             await interaction.reply('Carregando...')
+
             interaction.editReply({ content: '', files: [await image_text(message)] })
+        }
+        else if (commandName === 'texugoimagine'){
+            const message = interaction.options.getString('input');
+            await interaction.reply('Carregando...')
+            let imgs = await imagine(message)
+            interaction.editReply({ content: message })
+
+            for (let img of imgs) {
+                interaction.channel.send(img.generation.image_path)
+            }
         }
     }
 
