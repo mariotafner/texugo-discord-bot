@@ -140,11 +140,17 @@ client.on('interactionCreate', async interaction => {
         else if (commandName === 'texugoimagine'){
             const message = interaction.options.getString('input');
             await interaction.reply('Carregando...')
-            let imgs = await imagine(message)
-            interaction.editReply({ content: message })
 
-            for (let img of imgs) {
-                interaction.channel.send(img.generation.image_path)
+            try{
+                let imgs = await imagine(message)
+                interaction.editReply({ content: message })
+
+                for (let img of imgs) {
+                    interaction.channel.send(img.generation.image_path)
+                }
+            }
+            catch(err){
+                console.log(err)
             }
         }
     }
