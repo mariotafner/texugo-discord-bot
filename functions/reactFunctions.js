@@ -112,6 +112,15 @@ async function resend_react(client, msg, url, embed, file){
             .setStyle(ButtonStyle.Danger),
         );
 
+    if (url){
+        row.addComponents(
+            new ButtonBuilder()
+            .setLabel('Abrir link')
+            .setURL(url)
+            .setStyle(ButtonStyle.Link)   
+        )
+    }
+
     let react_channel = await client.channels.fetch(react_novo_id)
     react_channel.send({
         embeds: [messageEmbed],
