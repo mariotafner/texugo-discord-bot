@@ -144,10 +144,21 @@ client.on('interactionCreate', async interaction => {
             try{
                 let imgs = await imagine(message)
                 interaction.editReply({ content: message })
-
+            
+                let i = 0
+                let send_img = []
                 for (let img of imgs) {
-                    interaction.channel.send(img.generation.image_path)
+                    let filename = message.replace(',', '').replace(' ', '_') + '_' + i + '.png'
+                    send_img.push({
+                        attachment: img.generation.image_path,
+                        name: filename
+                    })
+                    //interaction.channel.send(img.generation.image_path)
+                    i++
                 }
+                interaction.channel.send({
+                    files: send_img
+                })
             }
             catch(err){
                 console.log(err)
