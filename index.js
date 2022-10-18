@@ -142,9 +142,12 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply('Carregando...')
 
             try{
-                let imgs = await imagine(message)
-                interaction.editReply({ content: message })
-            
+                function updateReply(status){
+                    interaction.editReply({ content: status })
+                }
+
+                let imgs = await imagine(message, updateReply)
+                
                 let i = 0
                 let send_img = []
                 for (let img of imgs) {
@@ -153,12 +156,12 @@ client.on('interactionCreate', async interaction => {
                         attachment: img.generation.image_path,
                         name: filename
                     })
-                    //interaction.channel.send(img.generation.image_path)
                     i++
                 }
                 interaction.channel.send({
                     files: send_img
                 })
+                interaction.editReply({ content: message })
             }
             catch(err){
                 console.log(err)
