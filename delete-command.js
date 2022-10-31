@@ -11,7 +11,7 @@ require('dotenv').config() //initialize dotenv
 
 const rest = new REST({ version: '10' }).setToken(process.env.CLIENT_TOKEN);
 
-rest.delete(Routes.applicationCommand(process.env.CLIENT_ID, '1012135325100941322'))
+rest.delete(Routes.applicationCommand(process.env.CLIENT_ID, '1032087800574660730'))
 	.then(() => console.log('Successfully deleted application command'))
 	.catch(console.error);
 

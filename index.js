@@ -13,6 +13,7 @@ import { clima } from './functions/catanduvaFunctions.js'
 import { image_text } from './functions/sendImage.js'
 import { startLoadingMessage } from './functions/loadingMessage.js'
 import { imagine } from './functions/imagine.js'
+import { user_info } from './functions/userInfo.js'
 
 const {
     Client,
@@ -166,6 +167,11 @@ client.on('interactionCreate', async interaction => {
             catch(err){
                 console.log(err)
             }
+        }
+        else if (commandName === 'twitchinfo'){
+            const username = interaction.options.getString('input');
+            console.log(username)
+            //user_info(username)
         }
     }
 

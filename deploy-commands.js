@@ -9,12 +9,13 @@ const { REST } = require('@discordjs/rest');
 require('dotenv').config() //initialize dotenv
 
 const commands = [
-	new SlashCommandBuilder().setName('catanduva').setDescription('CLima de catanduva'),
+	new SlashCommandBuilder().setName('catanduva').setDescription('Clima de catanduva'),
 	new SlashCommandBuilder().setName('texugosay').setDescription('Texugo irá dizer algo').addStringOption(option => option.setName('input').setDescription('Texto para o bot dizer').setRequired(true)),
 	new SlashCommandBuilder().setName('texugosaytext').setDescription('Texugo irá dizer algo'),
 	new SlashCommandBuilder().setName('contator').setDescription('Texugo sabe contar'),
 	new SlashCommandBuilder().setName('texugofrase').setDescription('Texugo irá dizer algo de maneira estilosa').addStringOption(option => option.setName('input').setDescription('Texto para o bot dizer').setRequired(true)),
 	new SlashCommandBuilder().setName('texugoimagine').setDescription('Texugo irá imaginar a sua frase').addStringOption(option => option.setName('input').setDescription('Texto (em inglês) para o bot desenhar').setRequired(true)),
+	new SlashCommandBuilder().setName('twitchinfo').setDescription('Texugo irá dizer sobre um usuário da twitch').addStringOption(option => option.setName('input').setDescription('Informe um usuário da twitch').setRequired(true)),
 ]
 	.map(command => command.toJSON());
 

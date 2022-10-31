@@ -189,6 +189,15 @@ async function approved_message(client, msg, action) {
         .setLabel('Concluído')
         .setStyle(ButtonStyle.Primary),
     );
+    if (embed)
+        if (embed.url){
+            row.addComponents(
+                new ButtonBuilder()
+                .setLabel('Abrir link')
+                .setURL(embed.url)
+                .setStyle(ButtonStyle.Link)   
+            )
+        }
 
     if (action === 'approve') {
         let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
