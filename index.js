@@ -171,7 +171,39 @@ client.on('interactionCreate', async interaction => {
         else if (commandName === 'twitchinfo'){
             const username = interaction.options.getString('input');
             console.log(username)
-            //user_info(username)
+            interaction.reply('Carregando...')
+
+            let embed = null
+            function callback(data){
+                if (data.loading){
+                    embed = new EmbedBuilder()
+                        .setColor(data.color)
+                        .setAuthor({
+                            name: data.username,
+                            iconURL: data.profile,
+                            url: 'https://twitch.tv/' + data.username
+                        })
+                        .addFields(
+                            {
+                                name: 'Qtd. de mensagens',
+                                value: String(data.qtd),
+                                inline: true
+                            },
+                            {
+                                name: "Primeira mensagem",
+                                value: new Date(data.first_message).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),
+                                inline: true
+                            }
+                        )
+                }
+                if (data.loading)
+                    interaction.editReply({ embeds: [embed], content: 'Carregando...' })
+                else
+                    interaction.editReply({ embeds: [embed], content: '' })
+
+            }
+
+            user_info(username, callback)
         }
     }
 
