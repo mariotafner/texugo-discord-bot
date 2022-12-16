@@ -1,5 +1,12 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
+require('dotenv').config() //initialize dotenv
+
+const { MongoClient, ServerApiVersion } = require('mongodb')
+const uri = process.env.MONGO_URL
+const db_client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+db_client.connect(err => {if (err) {console.log(err)}})
+const db_approved_react = db_client.db("speedyy").collection("approved_react")
 
 const {
     EmbedBuilder,
@@ -137,7 +144,7 @@ async function delete_message(client, channel_id, message_id) {
     console.log(channel_id, message_id)
 }
 
-async function approved_message(client, msg, action) {
+async function approved_message(client, msg, action, approver) {
     let files = []
     let attachments = Array.from(msg.attachments)
     if (attachments.length > 0) {
@@ -151,6 +158,8 @@ async function approved_message(client, msg, action) {
             })
         }
     }
+
+
 
     let embed = null
     if (msg.embeds.length > 0){
@@ -200,11 +209,27 @@ async function approved_message(client, msg, action) {
         }
 
     if (action === 'approve') {
+        // messageEmbed.setFooter({
+        //     text: 'texugolivre | ' + inserted.insertedId,
+        //     iconURL: 'https://upload.wikimedia.org/wikipedia/commons/5/57/AmericanBadger.JPG'
+        // })
+
+        //console.log(inserted)
+        // messageEmbed.addFields({
+        //     name: 'ID:',
+        //     value: String(inserted.insertedId)
+        // })
+
         let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
-        react_aprovado_channel.send({
+        let approved = await react_aprovado_channel.send({
             embeds: [messageEmbed],
             files: files,
             components: [row]
+        })
+
+        let inserted = await db_approved_react.insertOne({
+            message_id: approved.id,
+            approver: approver
         })
     }
     else if (action === 'complete') {
@@ -243,7 +268,7 @@ export async function process_react_interaction(client, interaction){
     const data = JSON.parse(interaction.customId)
     if (data.action === 'approve') {
         if (await is_mod(interaction.member)) {
-            await approved_message(client, interaction.message, 'approve')
+            await approved_message(client, interaction.message, 'approve', interaction.member.user.username)
             delete_message(client, interaction.message.channelId, interaction.message.id)
         }
         else{

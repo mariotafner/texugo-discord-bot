@@ -8,7 +8,7 @@ require('dotenv').config()
 export async function get_helix_token(){
     const api_url = 'https://id.twitch.tv/oauth2/token'
 
-    var urlencoded = new URLSearchParams();
+    let urlencoded = new URLSearchParams();
     urlencoded.append("client_id", process.env.HELIX_CLIENT_ID);	
     urlencoded.append("client_secret", process.env.HELIX_CLIENT_SECRET);
     urlencoded.append("grant_type", "client_credentials");
