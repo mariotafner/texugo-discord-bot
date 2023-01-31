@@ -174,7 +174,6 @@ async function approved_message(client, msg, action, approver) {
             url: 'https://discord.js.org'
         })
         .setTimestamp()
-
     console.log(embed)
     if (embed)
         if (embed.url){
@@ -209,16 +208,15 @@ async function approved_message(client, msg, action, approver) {
         }
 
     if (action === 'approve') {
-        // messageEmbed.setFooter({
-        //     text: 'texugolivre | ' + inserted.insertedId,
-        //     iconURL: 'https://upload.wikimedia.org/wikipedia/commons/5/57/AmericanBadger.JPG'
-        // })
 
-        //console.log(inserted)
-        // messageEmbed.addFields({
-        //     name: 'ID:',
-        //     value: String(inserted.insertedId)
-        // })
+        /*messageEmbed.addFields({
+            name: 'Aprovado por:',
+            value: approver
+        })*/
+
+        messageEmbed.setFooter({
+            text: 'Aprovado por: ' + approver
+        })
 
         let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
         let approved = await react_aprovado_channel.send({
