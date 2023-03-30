@@ -17,11 +17,10 @@
   "author": "mariofabre",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/rest": "^1.1.0",
     "axios": "^0.27.2",
     "chromium": "^3.0.3",
     "create-require": "^1.1.1",
-    "discord.js": "^14.3.0",
+    "discord.js": "^14.8.0",
     "dotenv": "^16.0.1",
     "mongodb": "^4.12.1",
     "node-fetch": "^3.2.10",
