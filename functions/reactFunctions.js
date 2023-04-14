@@ -20,6 +20,25 @@ function randon_color() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16)
 }
 
+function url_color(url) {
+    let color = '#ffffff'
+    if (url == null) return color
+    if (url.includes('youtube') || url.includes('youtu.be')) 
+        color = '#ff0000'
+    else if (url.includes('twitch'))
+        color = '#6441a5'
+    else if (url.includes('twitter'))
+        color = '#1da1f2'
+    else if (url.includes('instagram'))
+        color = '#e1306c'
+    else if (url.includes('facebook'))
+        color = '#214796'
+    else if (url.includes('tiktok'))
+        color = '#000000'
+    
+    return color
+}
+
 function has_url(msg) {
     return msg.includes('https://')
 }
@@ -58,7 +77,7 @@ export async function process_react(client, msg) {
 async function resend_react(client, msg, url, embed, file){
     let files = []
     const messageEmbed = new EmbedBuilder()
-        .setColor(randon_color())
+        .setColor(url_color(url))
         .setAuthor({
             name: msg.author.username,
             iconURL: 'https://cdn.discordapp.com/avatars/' + msg.author.id + '/' + msg.author.avatar + '.webp?size=80',
@@ -167,7 +186,7 @@ async function approved_message(client, msg, action, approver) {
     } 
         
     const messageEmbed = new EmbedBuilder()
-        .setColor(randon_color())
+        .setColor(url_color(''))
         .setAuthor({
             name: embed.author.name,
             iconURL: embed.author.iconURL,
@@ -179,6 +198,7 @@ async function approved_message(client, msg, action, approver) {
         if (embed.url){
             messageEmbed.setURL(embed.url)
             messageEmbed.setTitle(embed.title)
+            messageEmbed.setColor(url_color(embed.url))
             try{
                 messageEmbed.setThumbnail(embed.thumbnail.url)
             }
