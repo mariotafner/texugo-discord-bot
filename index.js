@@ -14,6 +14,7 @@ import { image_text } from './functions/sendImage.js'
 import { startLoadingMessage } from './functions/loadingMessage.js'
 import { imagine } from './functions/imagine.js'
 import { user_info } from './functions/userInfo.js'
+import { gpt } from './functions/gpt.js'
 
 const {
     Client,
@@ -204,6 +205,12 @@ client.on('interactionCreate', async interaction => {
             }
 
             user_info(username, callback)
+        }
+        else if (commandName === 'gpt'){
+            interaction.reply('Carregando...')
+            const prompt = interaction.options.getString('input');
+            const response = await gpt(prompt)
+            interaction.editReply(response)
         }
     }
 
