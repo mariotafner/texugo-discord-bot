@@ -12,7 +12,7 @@ import { process_react, process_react_interaction } from './functions/reactFunct
 import { clima } from './functions/catanduvaFunctions.js'
 import { image_text } from './functions/sendImage.js'
 import { startLoadingMessage } from './functions/loadingMessage.js'
-import { imagine } from './functions/imagine.js'
+import { imagine } from './functions/imagine_v2.js'
 import { user_info } from './functions/userInfo.js'
 import { gpt } from './functions/gpt.js'
 
@@ -155,7 +155,7 @@ client.on('interactionCreate', async interaction => {
                 for (let img of imgs) {
                     let filename = message.replace(',', '').replace(' ', '_') + '_' + i + '.png'
                     send_img.push({
-                        attachment: img.generation.image_path,
+                        attachment: img.url,
                         name: filename
                     })
                     i++
