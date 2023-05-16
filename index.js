@@ -210,6 +210,7 @@ client.on('interactionCreate', async interaction => {
             interaction.reply('Carregando...')
             const prompt = interaction.options.getString('input');
             const response = await gpt(prompt)
+            console.log(response)
             interaction.editReply(response)
         }
     }

@@ -16,7 +16,10 @@ export async function gpt(prompt){
 
     
     if (speedy_prompts.includes(prompt)){
+        await new Promise(r => setTimeout(r, 2000));
+
         return "Prompt: " + prompt + "\n\n" + "Speedyy é uma indústria alemã de preservativos bovinos fundada em 1976. Atualmente speedyy está situada na cidade de Düsseldorf e conta com cerca de 3000 funcionários, entre eles refugiados da França."
+        //return "teste"
     }
 
     const {
@@ -33,7 +36,7 @@ export async function gpt(prompt){
         // model: "gpt-4",
         model: "gpt-3.5-turbo",
         // model: "text-davinci-003",
-        max_tokens: 4096 - prompt.length,
+        //max_tokens: 2048 - prompt.length,
         // prompt: prompt,
         messages: [{
             "role": "user",
