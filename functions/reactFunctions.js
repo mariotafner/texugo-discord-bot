@@ -86,32 +86,8 @@ async function resend_react(client, msg, url, embed, file){
         .setTimestamp()
 
     if (url) {
-        if (embed) {
-            console.log(embed)
-            try {
-                messageEmbed.setURL(embed.url)
-                messageEmbed.setThumbnail(embed.thumbnail.url)
-            } catch (e) {
-                messageEmbed.setURL(msg.content)
-                console.log(e)
-            }
-
-            try {
-                messageEmbed.setTitle(embed.title)
-            } catch (e) {
-                try {
-                    messageEmbed.setTitle(embed.description)
-                } catch (e) {
-                    messageEmbed.setTitle(msg.content)
-                    console.log(e)
-                }
-                console.log(e)
-            }    
-        }
-        else {
-            messageEmbed.setURL(msg.content)
-            messageEmbed.setTitle(msg.content)
-        }
+        messageEmbed.setURL(msg.content)
+        messageEmbed.setTitle(msg.content)
     }
     else if (file){
         files = [file]
