@@ -17,6 +17,7 @@ const commands = [
 	new SlashCommandBuilder().setName('texugoimagine').setDescription('Texugo irá imaginar a sua frase').addStringOption(option => option.setName('input').setDescription('Texto (em inglês) para o bot desenhar').setRequired(true)),
 	new SlashCommandBuilder().setName('twitchinfo').setDescription('Texugo irá dizer sobre um usuário da twitch').addStringOption(option => option.setName('input').setDescription('Informe um usuário da twitch').setRequired(true)),
 	new SlashCommandBuilder().setName('gpt').setDescription('Texugo irá incorporar o Chat GPT').addStringOption(option => option.setName('input').setDescription('Informe sua pergnta').setRequired(true)),
+	new SlashCommandBuilder().setName('editimage').setDescription('Texugo irá editar a imagem em anexo com a descrição informada').addAttachmentOption(option => option.setName('image').setDescription('Imagem para editar').setRequired(true)).addStringOption(option => option.setName('input').setDescription('Texto para o bot editar a imagem').setRequired(true)),
 ]
 	.map(command => command.toJSON());
 

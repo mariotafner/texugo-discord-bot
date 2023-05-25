@@ -213,6 +213,44 @@ client.on('interactionCreate', async interaction => {
             console.log(response)
             interaction.editReply(response)
         }
+        else if (commandName === 'editimage'){
+            const prompt = interaction.options.getString('input');
+            const image = interaction.options.getAttachment('image');
+            await interaction.reply(prompt + ' (Carregando...)')
+
+            try{
+                function updateReply(status){
+                    interaction.editReply({ content: status })
+                }
+
+                const axios = require('axios')
+                const response = await axios.post("http://aquelelink:5000/edit", {
+                    prompt: prompt,
+                    url: image.attachment
+                })
+                console.log(response.data)
+
+
+                let send_img = []
+                //let filename = prompt.replace(',', '').replace(' ', '_') + '.png'
+
+                send_img.push({
+                    attachment: image.attachment,
+                })
+
+                send_img.push({
+                    attachment: "http://aquelelink:5000/images/" + response.data.id + ".png",
+                })
+
+                interaction.channel.send({
+                    files: send_img
+                })
+                interaction.editReply({ content: prompt })
+            }
+            catch(err){
+                console.log(err)
+            }
+        }
     }
 
     if (interaction.type === InteractionType.ModalSubmit){
