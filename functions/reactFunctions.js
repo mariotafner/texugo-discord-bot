@@ -2,6 +2,8 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 require('dotenv').config() //initialize dotenv
 
+import { image_caption } from './imageCaption.js'
+
 const { MongoClient, ServerApiVersion } = require('mongodb')
 const uri = process.env.MONGO_URL
 const db_client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -39,8 +41,23 @@ function url_color(url) {
     return color
 }
 
-function has_url(msg) {
-    return msg.includes('https://')
+function process_url(msg) {
+    let words = msg.split(' ')
+    let content = ''
+    let url = ''
+
+    for (let word of words) {
+        if (word.includes('https://')) {
+            url = word
+        } else {
+            content += word + ' '
+        }
+    }
+
+    return {
+        content: content,
+        url: url
+    }
 }
 
 const react_aprovado_id = '996512018184011908'
@@ -48,13 +65,10 @@ const react_antigo_id = '766474508944670743'
 const react_novo_id = '1003818108793933886'
 
 export async function process_react(client, msg) {
-    if (has_url(msg.content)) {
-        if (msg.embeds.length > 0) {
-            resend_react(client, msg, msg.content, msg.embeds[0], null)
-        }
-        else {
-            resend_react(client, msg, msg.content, null, null)
-        }
+    let { content, url } = process_url(msg.content)
+
+    if (url) {
+        resend_react(client, msg, content, url, null)
     }
 
     let attachments = Array.from(msg.attachments)
@@ -62,7 +76,7 @@ export async function process_react(client, msg) {
         for (let attachment of attachments) {
             const url = attachment[1].url
             const filename = attachment[1].name
-            resend_react(client, msg, null, null, {
+            resend_react(client, msg, content, null, {
                 attachment: url,
                 name: filename
             })
@@ -74,7 +88,7 @@ export async function process_react(client, msg) {
     }, 10);
 }
 
-async function resend_react(client, msg, url, embed, file){
+async function resend_react(client, msg, content, url, file){
     let files = []
     const messageEmbed = new EmbedBuilder()
         .setColor(url_color(url))
@@ -86,11 +100,21 @@ async function resend_react(client, msg, url, embed, file){
         .setTimestamp()
 
     if (url) {
-        messageEmbed.setURL(msg.content)
-        messageEmbed.setTitle(msg.content)
+        messageEmbed.setURL(url)
+        messageEmbed.setTitle(url)
     }
     else if (file){
-        files = [file]
+        content = content.trim()
+        
+        let is_image = (file.attachment.includes('.png') || file.attachment.includes('.jpg') || file.attachment.includes('.jpeg') || file.attachment.includes('.avif'))
+
+        if (content != '' && is_image) {
+            files = [await image_caption(file.attachment, content)]
+            content = ''
+        }
+        else{
+            files = [file]
+        } 
     }
 
     const row = new ActionRowBuilder()
@@ -124,11 +148,18 @@ async function resend_react(client, msg, url, embed, file){
     }
 
     let react_channel = await client.channels.fetch(react_novo_id)
-    react_channel.send({
+
+    let tmp = {
         embeds: [messageEmbed],
         files: files,
         components: [row]
-    })
+    }
+
+    if (content){
+        tmp.content = content
+    }
+
+    react_channel.send(tmp)
 }
 
 async function delete_message(client, channel_id, message_id) {
@@ -136,7 +167,6 @@ async function delete_message(client, channel_id, message_id) {
     channel.messages.fetch(message_id).then(msg => msg.delete()).catch(() => {
         console.log('message not found')
     })
-    console.log(channel_id, message_id)
 }
 
 async function approved_message(client, msg, action, approver) {
@@ -169,18 +199,12 @@ async function approved_message(client, msg, action, approver) {
             url: 'https://discord.js.org'
         })
         .setTimestamp()
-    console.log(embed)
+
     if (embed)
         if (embed.url){
             messageEmbed.setURL(embed.url)
             messageEmbed.setTitle(embed.title)
             messageEmbed.setColor(url_color(embed.url))
-            try{
-                messageEmbed.setThumbnail(embed.thumbnail.url)
-            }
-            catch(e){
-                console.log(e)
-            }
         }
 
     
@@ -204,12 +228,6 @@ async function approved_message(client, msg, action, approver) {
         }
 
     if (action === 'approve') {
-
-        /*messageEmbed.addFields({
-            name: 'Aprovado por:',
-            value: approver
-        })*/
-
         messageEmbed.setFooter({
             text: 'Aprovado por: ' + approver
         })

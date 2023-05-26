@@ -42,7 +42,9 @@ async function process_message(msg) {
             msg.reply('O comando !catanduva foi descontinuado, utilize /catanduva')
         }
         if (msg.channelId === react_novo_id) {
-            process_react(client, msg)
+            setTimeout(() => {
+                process_react(client, msg)
+            }, 500);
         }
         if (msg.content.startsWith('!texugoimg')) {
             let attachments = Array.from(msg.attachments)
