@@ -15,6 +15,7 @@ import { startLoadingMessage } from './functions/loadingMessage.js'
 import { imagine } from './functions/imagine_v2.js'
 import { user_info } from './functions/userInfo.js'
 import { gpt } from './functions/gpt.js'
+import { stream_summary } from './functions/streamSummary.js';
 
 const {
     Client,
@@ -242,6 +243,12 @@ client.on('interactionCreate', async interaction => {
             catch(err){
                 console.log(err)
             }
+        }
+        else if (commandName === 'streamsummary'){
+            
+            await interaction.reply('Veja alguns detalhes da última live em (beta): https://texugolivre.vercel.app/stream_summary')
+
+            //interaction.editReply({ content: '', files: [await stream_summary()] })
         }
     }
 
