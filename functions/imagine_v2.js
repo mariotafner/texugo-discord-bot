@@ -24,15 +24,24 @@ export async function imagine(text, update_function) {
     const openai = new OpenAIApi(configuration);
 
     update_function('Gerando imagem...')
-    const response = await openai.createImage({
-        prompt: text,
-        n: 4,
-        size: "1024x1024",
-    });
-    let image_url = response.data.data;
-    console.log(image_url);
 
-    update_function("Anexando imagem...")
+    try {
+        const response = await openai.createImage({
+            prompt: text,
+            n: 4,
+            size: "1024x1024",
+        });
+        let image_url = response.data.data;
+        console.log(image_url);
 
-    return image_url
+        update_function("Anexando imagem...")
+
+        return image_url
+    }
+    catch (error) {
+        console.log(error)
+        update_function("Erro ao gerar imagem.")
+        return null
+    }
 }
+

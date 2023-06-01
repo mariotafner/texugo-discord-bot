@@ -126,8 +126,7 @@ async function resend_react(client, msg, content, url, file){
                 action: 'approve'
             }))
             .setLabel('Aprovar')
-            .setStyle(ButtonStyle.Success)
-            .setEmoji('✅'),
+            .setStyle(ButtonStyle.Success),
 
             new ButtonBuilder()
             .setCustomId(JSON.stringify({

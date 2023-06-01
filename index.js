@@ -20,7 +20,7 @@ import { stream_summary } from './functions/streamSummary.js';
 const {
     Client,
     Intents,
-    ButtonBuilder,
+    ButtonBuilder,ButtonStyle,
     ActionRowBuilder, ModalBuilder, Modal, TextInputBuilder, TextInputStyle, TextInputComponent, InteractionType,
     GatewayIntentBits, Partials, EmbedBuilder, Emoji
 } = require('discord.js') //import discord.js
@@ -76,8 +76,69 @@ client.on('messageCreate', msg => {
 
 client.on('interactionCreate', async interaction => {
     console.log(interaction)
+
+    async function process_imagine(interaction, prompt = null){
+        let message = ''
+        if (prompt){
+            message = prompt
+        }
+        else{
+            message = interaction.options.getString('input');
+        }
+
+        await interaction.reply('Carregando...')
+
+        try{
+            function updateReply(status){
+                interaction.editReply({ content: status })
+            }
+            
+            let imgs = await imagine(message, updateReply)
+            
+            if (imgs){
+                let i = 0
+                let send_img = []
+                for (let img of imgs) {
+                    let filename = message.replace(',', '').replace(' ', '_') + '_' + i + '.png'
+                    send_img.push({
+                        attachment: img.url,
+                        name: filename
+                    })
+                    i++
+                }
+                interaction.channel.send({
+                    files: send_img
+                })
+                interaction.editReply({ content: message })
+            }
+            else{
+                const row = new ActionRowBuilder()
+                    .addComponents(
+                        new ButtonBuilder()
+                        .setCustomId('imagine:' + message)
+                        .setLabel('Tentar novamente')
+                        .setStyle(ButtonStyle.Danger),
+                    );
+                
+                interaction.editReply({ content: 'Não foi possível gerar a imagem', components: [row] })
+            }
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
+
     if (interaction.isButton()) {
-        process_react_interaction(client, interaction)
+        
+        const data = interaction.customId
+        console.log(data)
+        if (data.startsWith('imagine')) {
+            let prompt = data.split(':')[1]
+            process_imagine(interaction, prompt)
+        }
+        else {
+            process_react_interaction(client, interaction)
+        }
     }
 
     if (interaction.isCommand()){
@@ -133,34 +194,7 @@ client.on('interactionCreate', async interaction => {
             interaction.editReply({ content: '', files: [await image_text(message)] })
         }
         else if (commandName === 'texugoimagine'){
-            const message = interaction.options.getString('input');
-            await interaction.reply('Carregando...')
-
-            try{
-                function updateReply(status){
-                    interaction.editReply({ content: status })
-                }
-
-                let imgs = await imagine(message, updateReply)
-                
-                let i = 0
-                let send_img = []
-                for (let img of imgs) {
-                    let filename = message.replace(',', '').replace(' ', '_') + '_' + i + '.png'
-                    send_img.push({
-                        attachment: img.url,
-                        name: filename
-                    })
-                    i++
-                }
-                interaction.channel.send({
-                    files: send_img
-                })
-                interaction.editReply({ content: message })
-            }
-            catch(err){
-                console.log(err)
-            }
+            process_imagine(interaction)
         }
         else if (commandName === 'twitchinfo'){
             const username = interaction.options.getString('input');
