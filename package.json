@@ -25,7 +25,9 @@
     "mongodb": "^4.12.1",
     "node-fetch": "^3.2.10",
     "node-html-to-image": "^3.2.4",
-    "openai": "^3.2.1"
+    "openai": "^3.2.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "image-size": "^1.0.2"
   },
   "type": "module"
 }

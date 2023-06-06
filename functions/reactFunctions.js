@@ -3,6 +3,7 @@ const require = createRequire(import.meta.url);
 require('dotenv').config() //initialize dotenv
 
 import { image_caption } from './imageCaption.js'
+//import { video_caption } from './videoCaption.js'
 
 const { MongoClient, ServerApiVersion } = require('mongodb')
 const uri = process.env.MONGO_URL
@@ -107,10 +108,26 @@ async function resend_react(client, msg, content, url, file){
         content = content.trim()
         
         let is_image = (file.attachment.includes('.png') || file.attachment.includes('.jpg') || file.attachment.includes('.jpeg') || file.attachment.includes('.avif'))
+        let is_video = (file.attachment.includes('.mp4') || file.attachment.includes('.mov') || file.attachment.includes('.webm') || file.attachment.includes('.avi') || file.attachment.includes('.mkv') || file.attachment.includes('.flv') || file.attachment.includes('.wmv') || file.attachment.includes('.m4v') || file.attachment.includes('.3gp') || file.attachment.includes('.mpg') || file.attachment.includes('.mpeg') || file.attachment.includes('.m2v') || file.attachment.includes('.m4p') || file.attachment.includes('.m4b') || file.attachment.includes('.m4r') || file.attachment.includes('.m4a') || file.attachment.includes('.aac') || file.attachment.includes('.flac') || file.attachment.includes('.ogg') || file.attachment.includes('.oga') || file.attachment.includes('.mogg') || file.attachment.includes('.opus') || file.attachment.includes('.spx') || file.attachment.includes('.ogv') || file.attachment.includes('.ogx') || file.attachment.includes('.mp3') || file.attachment.includes('.wav') || file.attachment.includes('.wma') || file.attachment.includes('.wv') || file.attachment.includes('.webp') || file.attachment.includes('.gif'))
+        is_video = false;
 
         if (content != '' && is_image) {
             files = [await image_caption(file.attachment, content)]
             content = ''
+        }
+        else if (content != '' && is_video) {
+            let temp = await msg.reply({
+                content: 'Aplicando legenda, espere sentado pois isso pode demorar um pouco...',                
+                ephemeral: true,
+            })
+
+            //await new Promise(r => setTimeout(r, 1000));
+
+            //console.log(temp)
+            files = [await video_caption(file.attachment, content)]
+            content = ''
+            
+            delete_message(client, temp.channelId, temp.id)
         }
         else{
             files = [file]
