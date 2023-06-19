@@ -135,7 +135,29 @@ async function resend_react(client, msg, content, url, file){
     }
 
     const row = new ActionRowBuilder()
-        .addComponents(
+    
+    let react_channel = null
+
+    let member = msg.guild.members.cache.get(msg.author.id)
+
+    if (await is_mod(member)) {
+        messageEmbed.setFooter({
+            text: 'Aprovado por: ' + msg.author.username,
+        })
+
+        row.addComponents(
+            new ButtonBuilder()
+            .setCustomId(JSON.stringify({
+                action: 'complete'
+            }))
+            .setLabel('Concluído')
+            .setStyle(ButtonStyle.Primary),
+        );
+
+        react_channel = await client.channels.fetch(react_aprovado_id)
+    }
+    else {
+        row.addComponents(
             new ButtonBuilder()
             .setCustomId(JSON.stringify({
                 channel_id: msg.channelId,
@@ -154,6 +176,8 @@ async function resend_react(client, msg, content, url, file){
             .setLabel('Excluir')
             .setStyle(ButtonStyle.Danger),
         );
+        react_channel = await client.channels.fetch(react_novo_id)
+    }
 
     if (url){
         row.addComponents(
@@ -164,19 +188,15 @@ async function resend_react(client, msg, content, url, file){
         )
     }
 
-    let react_channel = await client.channels.fetch(react_novo_id)
-
     let tmp = {
         embeds: [messageEmbed],
         files: files,
         components: [row]
     }
 
-    if (content){
-        tmp.content = content
-    }
+    if (content){ tmp.content = content }
 
-    react_channel.send(tmp)
+    await react_channel.send(tmp)
 }
 
 async function delete_message(client, channel_id, message_id) {
@@ -201,8 +221,6 @@ async function approved_message(client, msg, action, approver) {
         }
     }
 
-
-
     let embed = null
     if (msg.embeds.length > 0){
         embed = msg.embeds[0]
@@ -226,14 +244,14 @@ async function approved_message(client, msg, action, approver) {
 
     
     const row = new ActionRowBuilder()
-    .addComponents(
-        new ButtonBuilder()
-        .setCustomId(JSON.stringify({
-            action: 'complete'
-        }))
-        .setLabel('Concluído')
-        .setStyle(ButtonStyle.Primary),
-    );
+        .addComponents(
+            new ButtonBuilder()
+            .setCustomId(JSON.stringify({
+                action: 'complete'
+            }))
+            .setLabel('Concluído')
+            .setStyle(ButtonStyle.Primary),
+        );
     if (embed)
         if (embed.url){
             row.addComponents(
@@ -249,25 +267,33 @@ async function approved_message(client, msg, action, approver) {
             text: 'Aprovado por: ' + approver
         })
 
-        let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
-        let approved = await react_aprovado_channel.send({
+        let tmp = {
             embeds: [messageEmbed],
             files: files,
             components: [row]
-        })
+        }
 
-        let inserted = await db_approved_react.insertOne({
+        if (msg.content){ tmp.content = content }
+
+        let react_aprovado_channel = await client.channels.fetch(react_aprovado_id)
+        let approved = await react_aprovado_channel.send(tmp)
+
+        await db_approved_react.insertOne({
             message_id: approved.id,
             approver: approver
         })
     }
     else if (action === 'complete') {
         let react_antigo_channel = await client.channels.fetch(react_antigo_id)
-        react_antigo_channel.send({
+        let tmp = {
             embeds: [messageEmbed],
             files: files,
             components: []
-        })
+        }
+
+        if (msg.content){ tmp.content = content }
+
+        react_antigo_channel.send(tmp)
     }
 }
 
