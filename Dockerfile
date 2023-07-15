@@ -1,4 +1,4 @@
-FROM freecoder/editly:latest
+#FROM freecoder/editly:latest
 FROM node:20-alpine3.16
 
 WORKDIR /app
@@ -9,14 +9,14 @@ RUN apk add --no-cache \
       freetype \
       harfbuzz \
       ca-certificates \
-      ttf-freefont \
-      nodejs \
-      ffmpeg \
-      python3 \
-      yarn
+      ttf-freefont 
+#      nodejs \
+#      ffmpeg \
+#      python3 \
+#      yarn
 
 COPY package*.json ./
-RUN find /usr/lib -type d -name "node-gyp" -exec sh -c 'cd "$(dirname "{}")" && npm i node-gyp@latest' \;
+#RUN find /usr/lib -type d -name "node-gyp" -exec sh -c 'cd "$(dirname "{}")" && npm i node-gyp@latest' \;
 
 RUN apk update
 RUN apk add vips-dev
