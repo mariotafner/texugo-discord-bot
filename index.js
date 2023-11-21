@@ -86,6 +86,8 @@ client.on('interactionCreate', async interaction => {
             message = interaction.options.getString('input');
         }
 
+        let orientation = interaction.options.getString('orientation');
+
         await interaction.reply('Carregando...')
 
         try{
@@ -93,7 +95,7 @@ client.on('interactionCreate', async interaction => {
                 interaction.editReply({ content: status })
             }
             
-            let imgs = await imagine(message, updateReply)
+            let imgs = await imagine(message, orientation, updateReply)
             
             if (imgs){
                 let i = 0
