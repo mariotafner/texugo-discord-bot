@@ -31,6 +31,8 @@ const client = new Client({
     partials: [Partials.Channel, Partials.GuildMember, Partials.GuildScheduledEvent, Partials.Message, Partials.Reaction, Partials.User]
 }) //create new client
 
+console.log("test")
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
 })
