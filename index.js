@@ -445,4 +445,4 @@ client.login(process.env.CLIENT_TOKEN) //login bot using token
 
 //https://buddy.works/tutorials/how-to-build-a-discord-bot-in-node-js-for-beginners#step-1-create-an-app-in-discord
 
-// redeploy //
+// redeploy ///
