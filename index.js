@@ -21,8 +21,8 @@ const {
     Client,
     Intents,
     ButtonBuilder,ButtonStyle,
-    ActionRowBuilder, ModalBuilder, Modal, TextInputBuilder, TextInputStyle, TextInputComponent, InteractionType,
-    GatewayIntentBits, Partials, EmbedBuilder, Emoji
+    ActionRowBuilder, ModalBuilder, Modal, TextInputBuilder, TextInputStyle, TextInputComponent, InteractionType, StringSelectMenuBuilder,
+    GatewayIntentBits, Partials, EmbedBuilder, Emoji, UserSelectMenuBuilder, StringSelectMenuOptionBuilder
 } = require('discord.js') //import discord.js
 
 const client = new Client({
@@ -78,7 +78,39 @@ client.on('interactionCreate', async interaction => {
     console.log(interaction)
 
     async function process_imagine(interaction, prompt = null){
-        let message = ''
+        const modal = new ModalBuilder()
+            .setCustomId('modal_imagine')
+            .setTitle('Insira os dados para a imagem');
+
+        const promptInput = new TextInputBuilder()
+            .setCustomId('prompt')
+            .setLabel("Prompt")
+            .setStyle(TextInputStyle.Paragraph)
+            .setRequired(true);
+
+        // const orientationInput = new StringSelectMenuBuilder()
+        //     .setCustomId('orientation')
+        //     .setPlaceholder('Orientação da imagem')
+        //     .addOptions(
+        //         new StringSelectMenuOptionBuilder()
+        //             .setLabel('Retrato')
+        //             .setValue('portrait'),
+        //         new StringSelectMenuOptionBuilder()
+        //             .setLabel('Quadrado')
+        //             .setValue('square'),
+        //         new StringSelectMenuOptionBuilder()
+        //             .setLabel('Paisagem')
+        //             .setValue('landscape'),
+        //     );
+
+        const firstActionRow = new ActionRowBuilder().addComponents(promptInput);
+        // const secondActionRow = new ActionRowBuilder().addComponents(orientationInput);
+
+        modal.addComponents(firstActionRow);
+
+        await interaction.showModal(modal);
+
+        /*let message = ''
         if (prompt){
             message = prompt
         }
@@ -127,16 +159,15 @@ client.on('interactionCreate', async interaction => {
         }
         catch(err){
             console.log(err)
-        }
+        }*/
     }
 
     if (interaction.isButton()) {
-        
         const data = interaction.customId
         console.log(data)
         if (data.startsWith('imagine')) {
-            let prompt = data.split(':')[1]
-            process_imagine(interaction, prompt)
+            //let prompt = data.split(':')[1]
+            process_imagine(interaction)
         }
         else {
             process_react_interaction(client, interaction)
@@ -289,11 +320,96 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.type === InteractionType.ModalSubmit){
-        // Get the data entered by the user
-	    const message = interaction.fields.getTextInputValue('message');
-        interaction.deferUpdate()
-        let channel = await client.channels.fetch(interaction.channelId)
-        channel.send(message)
+        if (interaction.customId === 'myModal') {
+            // Get the data entered by the user
+            const message = interaction.fields.getTextInputValue('message');
+            interaction.deferUpdate()
+            interaction.channel.send(message)
+        }
+        else if (interaction.customId === 'modal_imagine') {
+            function getEmbed(done, step, imgs, prompt, interaction = null){
+                const messageEmbed = new EmbedBuilder()
+                    .setColor(done ? "#3ba55c" : "#ffd91d")
+                    .setAuthor({
+                        name: interaction.user.username,
+                        iconURL: 'https://cdn.discordapp.com/avatars/' + interaction.user.id + '/' + interaction.user.avatar + '.webp?size=80',
+                        url: 'https://discord.js.org'
+                    })
+                    // .setTimestamp()
+                    .setTitle(prompt)
+                
+                if (!done){
+                    messageEmbed.setDescription(step)
+                }
+                else {
+                    messageEmbed.setFooter({
+                        text: 'Use /texugoimagine para gerar uma imagem',
+                    })
+                }
+                    
+
+                let tmp = {
+                    embeds: [messageEmbed],
+                }
+
+                if (imgs){
+                    tmp.files = imgs
+                }
+
+                return tmp
+            }
+
+            let prompt = interaction.fields.getTextInputValue('prompt');
+
+            interaction.deferUpdate()
+
+
+            
+
+            let message = await interaction.channel.send(getEmbed(false, 'Carregando...', null, prompt, interaction))
+
+            try{
+                function updateReply(status){
+                    message.edit(getEmbed(false, status, null, prompt, interaction))
+                }
+                
+                let imgs = await imagine(prompt, 'landscape', updateReply)
+                
+                if (imgs){
+                    // let i = 0
+                    // let send_img = []
+                    // for (let img of imgs) {
+                    //     let filename = prompt.replace(',', '').replace(' ', '_') + '_' + i + '.png'
+                    //     send_img.push({
+                    //         attachment: img.url,
+                    //         name: filename
+                    //     })
+                    //     i++
+                    // }
+
+                    
+                    
+                    message.edit(getEmbed(true, prompt, [{
+                        attachment: imgs[0].url,
+                        name: prompt.replace(',', '').replace(' ', '_') + '.png'
+                    }], prompt, interaction))
+                }
+                else{
+                    const row = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                            .setCustomId('imagine:' + prompt)
+                            .setLabel('Tentar novamente')
+                            .setStyle(ButtonStyle.Danger),
+                        );
+                    
+                    message.edit({ content: 'Não foi possível gerar a imagem', components: [row] })
+                }
+            }
+            catch(err){
+                console.log(err)
+            }
+        }
     }
 })
 
